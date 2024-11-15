@@ -1,0 +1,63 @@
+version: "3.0"
+services:
+    nginx:
+        image: nginx:alpine
+        restart: always
+        ports:
+            - "80:80"
+        volumes:
+            - "frontend:/var/www/html/:ro"
+            - "./nginx.conf:/etc/nginx/nginx.conf"
+        depends_on:
+            - frontend
+            - backend
+
+    frontend:
+        image: elabosak233/cdsuno:main
+        restart: always
+        volumes:
+            - "frontend:/app"
+
+    backend:
+        image: elabosak233/cdsctf:main
+        restart: always
+        volumes:
+            - "backend:/app"
+            - "./application.toml:/app/application.toml:ro"
+            - "./k8s-config.yml:/app/k8s-config.yml:ro"
+        depends_on:
+            - db
+            - queue
+            - cache
+
+    db:
+        image: postgres:alpine
+        restart: always
+        environment:
+            POSTGRES_USER: cdsctf
+            POSTGRES_PASSWORD: cdsctf
+            POSTGRES_DB: cdsctf
+        volumes:
+            - "db:/var/lib/postgresql/data"
+
+    queue:
+        image: nats:alpine
+        restart: always
+        command:
+            - "--js"
+            - "--sd=/data"
+        volumes:
+            - "queue:/data"
+
+    cache:
+        image: valkey/valkey:alpine
+        restart: always
+        volumes:
+            - "cache:/data"
+
+volumes:
+    frontend:
+    backend:
+    db:
+    queue:
+    cache:

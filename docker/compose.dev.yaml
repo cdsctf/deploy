@@ -1,0 +1,37 @@
+version: "3.0"
+services:
+    db:
+        image: postgres:alpine
+        restart: always
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_USER: cdsctf
+            POSTGRES_PASSWORD: cdsctf
+            POSTGRES_DB: cdsctf
+        volumes:
+            - "./db:/var/lib/postgresql/data"
+
+    queue:
+        image: nats:alpine
+        restart: always
+        ports:
+            - "4222:4222"
+        command:
+            - "--js"
+            - "--sd=/data"
+        volumes:
+            - "./queue:/data"
+
+    cache:
+        image: valkey/valkey:alpine
+        restart: always
+        ports:
+            - "6379:6379"
+        volumes:
+            - "./cache:/data"
+
+volumes:
+    db:
+    queue:
+    cache:
