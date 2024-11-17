@@ -24,7 +24,7 @@ services:
         volumes:
             - "backend:/app"
             - "./application.toml:/app/application.toml:ro"
-            - "./k8s-config.yml:/app/k8s-config.yml:ro"
+            - "./k8s-config.yml:/root/.kube/config:ro"
         depends_on:
             - db
             - queue
@@ -61,3 +61,11 @@ volumes:
     db:
     queue:
     cache:
+
+networks:
+    cdsnet:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: "172.20.0.0/24"
