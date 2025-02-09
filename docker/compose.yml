@@ -13,7 +13,7 @@ services:
             - backend
 
     frontend:
-        image: elabosak233/cdsuno:main
+        image: elabosak233/cdsant:main
         restart: always
         volumes:
             - "frontend:/app"
